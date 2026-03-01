@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Talks 2026</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 960px;
+            margin: auto;
+            overflow: hidden;
+            padding: 0 20px;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .search-container {
+            padding: 1rem 0;
+            text-align: center;
+        }
+        #search-input {
+            padding: 0.5rem;
+            width: 50%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #schedule-container {
+            margin-top: 20px;
+        }
+        .talk-card {
+            background: #fff;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease-in-out;
+        }
+        .talk-card.hide {
+            display: none;
+        }
+        .talk-card h2 {
+            font-size: 1.8rem;
+            margin-top: 0;
+        }
+        .talk-time {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .talk-speakers {
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .talk-categories span {
+            background: #eee;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+        }
+        .break-card {
+            background: #e0e0e0;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>Tech Talks 2026</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search by category...">
+        </div>
+
+        <div id="schedule-container"></div>
+    </div>
+
+    <template id="talk-template">
+        <div class="talk-card">
+            <div class="talk-time"></div>
+            <h2 class="talk-title"></h2>
+            <div class="talk-speakers"></div>
+            <p class="talk-description"></p>
+            <div class="talk-categories"></div>
+        </div>
+    </template>
+
+    <script>
+        const talks = [
+            {
+                title: "The Future of Artificial Intelligence",
+                speakers: ["Dr. Evelyn Reed"],
+                categories: ["AI", "Machine Learning", "Future Tech"],
+                duration: 60,
+                description: "A deep dive into the next generation of AI and its potential impact on society."
+            },
+            {
+                title: "Building Scalable Web Applications",
+                speakers: ["John Doe", "Jane Smith"],
+                categories: ["Web Development", "Scalability", "Architecture"],
+                duration: 60,
+                description: "Learn the best practices for designing and building web applications that can handle millions of users."
+            },
+            {
+                title: "Cybersecurity in a Post-Quantum World",
+                speakers: ["Alex Chen"],
+                categories: ["Cybersecurity", "Quantum Computing", "Cryptography"],
+                duration: 60,
+                description: "An exploration of the new security challenges and opportunities presented by quantum computing."
+            },
+            {
+                title: "The Rise of Serverless Computing",
+                speakers: ["Maria Garcia"],
+                categories: ["Serverless", "Cloud Computing", "DevOps"],
+                duration: 60,
+                description: "How serverless architectures are changing the way we build and deploy applications."
+            },
+            {
+                title: "Human-Computer Interaction: Designing for Emotion",
+                speakers: ["Dr. Ben Carter", "Dr. Olivia White"],
+                categories: ["HCI", "UX Design", "Psychology"],
+                duration: 60,
+                description: "This talk explores the intersection of psychology and design to create more engaging and emotionally resonant user experiences."
+            },
+            {
+                title: "Blockchain Beyond Cryptocurrency",
+                speakers: ["Satoshi Nakamoto (Anonymous)"],
+                categories: ["Blockchain", "Decentralization", "Web3"],
+                duration: 60,
+                description: "A look at the innovative use cases for blockchain technology beyond digital currencies."
+            }
+        ];
+
+        function renderSchedule() {
+            const scheduleContainer = document.getElementById('schedule-container');
+            const talkTemplate = document.getElementById('talk-template');
+            let currentTime = new Date();
+            currentTime.setHours(10, 0, 0, 0); 
+
+            talks.forEach((talk, index) => {
+                const startTime = new Date(currentTime);
+                const endTime = new Date(currentTime.getTime() + talk.duration * 60000);
+
+                const card = talkTemplate.content.cloneNode(true).querySelector('.talk-card');
+                
+                card.querySelector('.talk-time').textContent = `${formatTime(startTime)} - ${formatTime(endTime)}`;
+                card.querySelector('.talk-title').textContent = talk.title;
+                card.querySelector('.talk-speakers').textContent = `By: ${talk.speakers.join(', ')}`;
+                card.querySelector('.talk-description').textContent = talk.description;
+                
+                const categoriesContainer = card.querySelector('.talk-categories');
+                talk.categories.forEach(category => {
+                    const categorySpan = document.createElement('span');
+                    categorySpan.textContent = category;
+                    categoriesContainer.appendChild(categorySpan);
+                });
+                
+                scheduleContainer.appendChild(card);
+
+                currentTime = new Date(endTime.getTime() + 10 * 60000);
+
+                if (index === 2) { 
+                    const lunchBreakCard = document.createElement('div');
+                    lunchBreakCard.classList.add('talk-card', 'break-card');
+                    const lunchStartTime = new Date(currentTime);
+                    const lunchEndTime = new Date(currentTime.getTime() + 60 * 60000);
+                    lunchBreakCard.innerHTML = `<div class="talk-time">${formatTime(lunchStartTime)} - ${formatTime(lunchEndTime)}</div><div>Lunch Break</div>`;
+                    scheduleContainer.appendChild(lunchBreakCard);
+                    currentTime = lunchEndTime;
+                }
+            });
+        }
+
+        function formatTime(date) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function filterTalks() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const talkCards = document.querySelectorAll('.talk-card:not(.break-card)');
+
+            talkCards.forEach(card => {
+                const categoriesText = card.querySelector('.talk-categories').textContent.toLowerCase();
+                if (categoriesText.includes(searchTerm)) {
+                    card.classList.remove('hide');
+                } else {
+                    card.classList.add('hide');
+                }
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSchedule();
+            document.getElementById('search-input').addEventListener('keyup', filterTalks);
+        });
+
+    </script>
+</body>
+</html>
